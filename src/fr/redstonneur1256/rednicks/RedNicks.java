@@ -72,7 +72,6 @@ public class RedNicks extends JavaPlugin {
                         length > 16;
                 if(isInvalid) {
                     invalid.add(name);
-                    System.out.println(specialCharacters.matcher(name).matches());
                 }
             }
             for (String name : invalid) {
