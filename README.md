@@ -2,7 +2,8 @@
 Simple plugin to change name on spigot
 
 
-Chage player nick manually:
+# Developer API
+Change player nick manually:
 ```java
 import fr.redstonneur1256.rednicks.RedNicks;
 import fr.redstonneur1256.rednicks.utils.NickData;
