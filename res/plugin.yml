@@ -1,0 +1,6 @@
+name: 'RedNicks'
+author: 'Redstonneur1256'
+version: '1.0'
+main: 'fr.redstonneur1256.rednicks.RedNicks'
+commands:
+  nick: { }

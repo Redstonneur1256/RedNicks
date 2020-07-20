@@ -1,0 +1,5 @@
+removed: "&fYou have &cremoved&f your nick"
+usage: "&cUsage: /{0} <random/name>"
+set: "&fYou name has been set to &a{0} &f!"
+permission: "&cYou don't have permission to do this"
+error: "&cThere was an error while setting your nick, please contact an admin."
