@@ -1,6 +1,7 @@
 # RedNicks
 Simple plugin to change name on spigot
 
+[Download](https://www.spigotmc.org/resources/rednicks.81723/)
 
 # Developer API
 Change player nick manually:
