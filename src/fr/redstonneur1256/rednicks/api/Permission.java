@@ -6,6 +6,7 @@ public enum Permission {
     CUSTOM_NICK("nick.choose");
 
     private String code;
+
     Permission(String code) {
         this.code = code;
     }

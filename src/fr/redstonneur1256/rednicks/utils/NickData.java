@@ -15,6 +15,7 @@ public class NickData {
     private final String realName;
     private final UUID uuid;
     private String nickName;
+
     public NickData(Player player) {
         this.realName = player.getName();
         this.uuid = player.getUniqueId();
@@ -23,6 +24,7 @@ public class NickData {
 
     /**
      * Set the player nickname
+     *
      * @param name the new name or null to reset it
      * @throws Exception if the nick change has failed
      */
@@ -31,6 +33,9 @@ public class NickData {
 
         if(name == null)
             name = realName;
+
+        if(name.length() > 16)
+            name = name.substring(0, 16);
 
         String oldName = player.getName();
         boolean willChangeName = !oldName.equals(name);
@@ -59,8 +64,9 @@ public class NickData {
 
     /**
      * Remove the player nickname
-     * @see NickData#setNick(String)
+     *
      * @throws Exception if the nick change has failed
+     * @see NickData#setNick(String)
      */
     public void removeNick() throws Exception {
         setNick(null);
@@ -68,10 +74,11 @@ public class NickData {
 
     /**
      * Set the player nick to a random nick.
+     *
+     * @throws IllegalStateException if no free random name is available
+     * @throws Exception             if the nick change failed
      * @see RedNicks#getRandomNames()
      * @see NickData#setNick(String)
-     * @throws IllegalStateException if no free random name is available
-     * @throws Exception if the nick change failed
      */
     public void setRandomNick() throws Exception {
         String name;
@@ -80,9 +87,9 @@ public class NickData {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int attempt = 0;
         do {
-            attempt ++; // Do not stuck server on infinite loop.
+            attempt++; // Do not stuck server on infinite loop.
             name = names.get(random.nextInt(names.size()));
-        } while (plugin.isUsed(name) && attempt < 1000);
+        } while(plugin.isUsed(name) && attempt < names.size());
         if(attempt == 1000) {
             throw new IllegalStateException("Cannot find available name.");
         }
@@ -93,8 +100,16 @@ public class NickData {
         return nickName != null && !nickName.equals(realName);
     }
 
-    public String getRealName() { return realName; }
-    public UUID getUuid() { return uuid; }
-    public String getNickName() { return nickName; }
+    public String getRealName() {
+        return realName;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
 
 }

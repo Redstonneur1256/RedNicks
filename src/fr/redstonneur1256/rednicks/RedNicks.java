@@ -23,6 +23,7 @@ public class RedNicks extends JavaPlugin {
     private Map<UUID, NickData> dataMap;
     private PermissionHolder permissionHolder;
     private List<String> randomNames;
+
     public RedNicks() {
         if(instance != null) {
             throw new IllegalStateException("Multiple instances of RedNicks.");
@@ -33,10 +34,20 @@ public class RedNicks extends JavaPlugin {
         this.randomNames = new ArrayList<>();
     }
 
+    /**
+     * Get the plugin instance
+     *
+     * @return the plugin
+     */
+    public static RedNicks get() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        saveResource("messages.yml", false);
+        saveResource("messages/en.yml", false);
+        saveResource("messages/fr.yml", false);
         saveResource("defaultNames.txt", false);
 
         FileConfiguration config = getConfig();
@@ -63,40 +74,38 @@ public class RedNicks extends JavaPlugin {
             Pattern specialCharacters = Pattern.compile("$*[^\\W]*$");
 
             List<String> invalid = new ArrayList<>();
-            for (String name : randomNames) {
+            for(String name : randomNames) {
                 int length = name.length();
                 boolean isInvalid =
                         !specialCharacters.matcher(name).matches() ||
-                        length < 3 ||
-                        length > 16;
+                                length < 3 ||
+                                length > 16;
                 if(isInvalid) {
                     invalid.add(name);
-                    System.out.println(specialCharacters.matcher(name).matches());
                 }
             }
-            for (String name : invalid) {
-                console.sendMessage("§cRemoved '" + name + "' because its invalid.");
+            for(String name : invalid) {
+                console.sendMessage(ChatColor.RED + "Removed '" + name + "' because its invalid.");
             }
             randomNames.removeAll(invalid);
 
-            if(!invalid.isEmpty()) { // The list was modifier
+            if(!invalid.isEmpty()) { // The list was modified
                 PrintWriter writer = new PrintWriter(new FileOutputStream(namesFile), true);
-                for (String randomName : randomNames) {
+                for(String randomName : randomNames) {
                     writer.println(randomName);
                 }
                 writer.close();
             }
 
 
-
-        } catch (Exception e) {
+        }catch(Exception e) {
             e.printStackTrace();
             console.sendMessage(ChatColor.RED + "Impossible to load random names, disabling.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        I18N.loadMessages(new File(getDataFolder(), config.getString("messagesFile", "messages.yml")));
+        I18N.loadMessages(new File(getDataFolder(), config.getString("messagesFile", "messages/en.yml")));
 
         getCommand("nick").setExecutor(new NickCommand());
         getServer().getPluginManager().registerEvents(new Listeners(), this);
@@ -106,10 +115,10 @@ public class RedNicks extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (NickData data : dataMap.values()) {
+        for(NickData data : dataMap.values()) {
             try {
                 data.removeNick();
-            } catch (Exception exception) {
+            }catch(Exception exception) {
                 exception.printStackTrace();
             }
         }
@@ -117,6 +126,7 @@ public class RedNicks extends JavaPlugin {
 
     /**
      * Get a player nick data to get his name
+     *
      * @return the data
      */
     public NickData getData(Player player) {
@@ -130,6 +140,7 @@ public class RedNicks extends JavaPlugin {
 
     /**
      * Remove the data from the cache and remove nickname when player disconnect
+     *
      * @param uuid the player UUID
      */
     protected void removeData(UUID uuid) {
@@ -137,7 +148,7 @@ public class RedNicks extends JavaPlugin {
         if(data != null) {
             try {
                 data.removeNick();
-            } catch (Exception exception) {
+            }catch(Exception exception) {
                 exception.printStackTrace();
             }
         }
@@ -145,6 +156,7 @@ public class RedNicks extends JavaPlugin {
 
     /**
      * Check if an user name is online
+     *
      * @param name the name or nick to check
      * @return if hes online
      */
@@ -161,11 +173,12 @@ public class RedNicks extends JavaPlugin {
 
     /**
      * Get a player uuid by his name ignoring the nick.
+     *
      * @param realName The player real name
      * @return the uuid of player if its found, else null
      */
     public UUID getUUID(String realName) {
-        for (NickData data : dataMap.values()) {
+        for(NickData data : dataMap.values()) {
             if(data.getRealName().equalsIgnoreCase(realName)) {
                 return data.getUuid();
             }
@@ -175,6 +188,7 @@ public class RedNicks extends JavaPlugin {
 
     /**
      * Get a player by his name ignoring the nick.
+     *
      * @param realName The player real name
      * @return the player if its found, else null
      * @see RedNicks#getUUID(String)
@@ -185,24 +199,25 @@ public class RedNicks extends JavaPlugin {
     }
 
     /**
-     * Get the plugin instance
-     * @return the plugin
-     */
-    public static RedNicks get() { return instance; }
-
-    /**
      * @return the current permission holder used for plugin.
      */
-    public PermissionHolder getPermissionHolder() { return permissionHolder; }
+    public PermissionHolder getPermissionHolder() {
+        return permissionHolder;
+    }
 
     /**
      * Set the permission holder for the plugin
+     *
      * @param permissionHolder the new permission holder
      */
-    public void setPermissionHolder(PermissionHolder permissionHolder) { this.permissionHolder = permissionHolder; }
+    public void setPermissionHolder(PermissionHolder permissionHolder) {
+        this.permissionHolder = permissionHolder;
+    }
 
     /**
      * @return the list of random names available.
      */
-    public List<String> getRandomNames() { return randomNames; }
+    public List<String> getRandomNames() {
+        return randomNames;
+    }
 }

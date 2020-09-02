@@ -5,8 +5,11 @@ plugins {
 group 'fr.redstonneur1256'
 version '1.0'
 
+compileJava.options.encoding = "UTF-8"
 sourceSets.main.java.srcDirs = ["src/"]
 sourceSets.main.resources.srcDirs = ["res/"]
+sourceSets.test.java.srcDirs = []
+sourceSets.test.resources.srcDirs = []
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -22,11 +25,4 @@ repositories {
 
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
-}
-
-task copyJar {
-    copy {
-        from 'build/libs/RedNick.jar'
-        into "D:\\Users\\user\\Documents\\Documents\\Minecraft\\Serveurs\\ArmyPlugin\\plugins"
-    }
 }

@@ -1,0 +1,5 @@
+removed: "&fVous avez &cretiré&f votre nick."
+usage: "&cUsage: /{0} <random/nom>"
+set: "&fTon pseudo a été changé pour &a{0} &f!"
+permission: "&cTu n'a pas la permission de faire cette commande."
+error: "&cIl y a eu une erreur durant l'execution de la commande. Contacte un administrateur"

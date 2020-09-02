@@ -11,6 +11,7 @@ public class I18N {
 
     /**
      * Load the messages
+     *
      * @param file the messages file
      */
     public static void loadMessages(File file) {
@@ -19,13 +20,14 @@ public class I18N {
 
     /**
      * Get a message by his key
-     * @param key the message key
+     *
+     * @param key       the message key
      * @param arguments the arguments, replacing {0}, {1} ect in the message
      * @return the message formatted with arguments
      */
     public static String getMessage(String key, Object... arguments) {
         String string = configuration.getString(key, "Missing message \"" + key + "\", please contact admins.");
-        for (int i = 0; i < arguments.length; i++) {
+        for(int i = 0; i < arguments.length; i++) {
             string = string.replace("{" + i + "}", String.valueOf(arguments[i]));
         }
         return ChatColor.translateAlternateColorCodes('&', string);

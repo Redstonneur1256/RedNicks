@@ -11,55 +11,55 @@ import java.util.UUID;
 
 public class Reflection {
 
-    private static final String BUKKIT_PACKAGE = "org.bukkit.craftbukkit.";
-    private static final String NMS_PACKAGE = "net.minecraft.server.";
-    private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(BUKKIT_PACKAGE.length());
-    private static final Method GET_HANDLE_METHOD;
-    private static final Field GAME_PROFILE_FIELD;
-    private static final Constructor<?> GAME_PROFILE_CONSTRUCTOR;
-    static  {
-        try {
-            Class<?> CRAFT_PLAYER = getBukkitClass("entity.CraftPlayer");
-            Class<?> ENTITY_PLAYER = getNMSClass("EntityHuman");
-            Class<?> GAME_PROFILE = getClass("com.mojang.authlib.GameProfile");
+    private static final String bukkitPackage = "org.bukkit.craftbukkit.";
+    private static final String nmsPackage = "net.minecraft.server.";
+    private static final String version = Bukkit.getServer().getClass().getPackage().getName().substring(bukkitPackage.length());
+    private static final Method getHandleMethod;
+    private static final Field gameProfileField;
+    private static final Constructor<?> gameProfileConstructor;
 
-            GET_HANDLE_METHOD = CRAFT_PLAYER.getDeclaredMethod("getHandle");
-            GET_HANDLE_METHOD.setAccessible(true);
+    static {
+        try {
+            Class<?> craftPlayer = getBukkitClass("entity.CraftPlayer");
+            Class<?> entityPlayer = getNMSClass("EntityHuman");
+            Class<?> gameProfile = null;// = getClass("com.mojang.authlib.GameProfile"); Can be in another package like net.minecraft.server.libs.com....
+
+            getHandleMethod = craftPlayer.getDeclaredMethod("getHandle");
+            getHandleMethod.setAccessible(true);
 
             Field profileField = null;
-            for (Field field : ENTITY_PLAYER.getDeclaredFields()) {
-                if(field.getType().equals(GAME_PROFILE)) {
+            for(Field field : entityPlayer.getDeclaredFields()) {
+                if(field.getType().getSimpleName().equalsIgnoreCase("GameProfile")) {
                     profileField = field;
+                    gameProfile = field.getType();
                     break;
                 }
             }
             if(profileField == null)
                 throw new IllegalStateException("Cannot locate game profile field");
 
-            GAME_PROFILE_FIELD = profileField;
-            GAME_PROFILE_FIELD.setAccessible(true);
+            gameProfileField = profileField;
+            gameProfileField.setAccessible(true);
 
-            GAME_PROFILE_CONSTRUCTOR = GAME_PROFILE.getConstructor(UUID.class, String.class);
+            gameProfileConstructor = gameProfile.getConstructor(UUID.class, String.class);
 
-            Field MODIFIERS_FIELD = Field.class.getDeclaredField("modifiers");
-            MODIFIERS_FIELD.setAccessible(true);
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
 
-            MODIFIERS_FIELD.set(GAME_PROFILE_FIELD, GAME_PROFILE_FIELD.getModifiers() & ~Modifier.FINAL);
+            modifiersField.set(gameProfileField, gameProfileField.getModifiers() & ~Modifier.FINAL);
 
-
-
-        }catch (Exception exception) {
+        }catch(Exception exception) {
             exception.printStackTrace();
             throw new IllegalStateException("Cannot initialize reflection.");
         }
     }
 
     public static Class<?> getBukkitClass(String name) throws ClassNotFoundException {
-        return getClass(BUKKIT_PACKAGE + VERSION + "." + name);
+        return getClass(bukkitPackage + version + "." + name);
     }
 
     public static Class<?> getNMSClass(String name) throws ClassNotFoundException {
-        return getClass(NMS_PACKAGE + VERSION + "." + name);
+        return getClass(nmsPackage + version + "." + name);
     }
 
     public static Class<?> getClass(String name) throws ClassNotFoundException {
@@ -68,8 +68,8 @@ public class Reflection {
 
 
     public static void setProfileName(Player player, String name) throws Exception {
-        Object entityPlayer = GET_HANDLE_METHOD.invoke(player);
-        Object gameProfile = GAME_PROFILE_CONSTRUCTOR.newInstance(player.getUniqueId(), name);
-        GAME_PROFILE_FIELD.set(entityPlayer, gameProfile);
+        Object entityPlayer = getHandleMethod.invoke(player);
+        Object gameProfile = gameProfileConstructor.newInstance(player.getUniqueId(), name);
+        gameProfileField.set(entityPlayer, gameProfile);
     }
 }

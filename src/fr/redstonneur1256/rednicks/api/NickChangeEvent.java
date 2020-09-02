@@ -12,6 +12,7 @@ public class NickChangeEvent extends PlayerEvent {
     private NickData data;
     private String previousName;
     private String newName;
+
     public NickChangeEvent(Player player, NickData data, String previousName, String newName) {
         super(player);
         this.data = data;
@@ -19,16 +20,24 @@ public class NickChangeEvent extends PlayerEvent {
         this.newName = newName;
     }
 
-    public NickData getData() { return data; }
-    public String getPreviousName() { return previousName; }
-    public String getNewName() { return newName; }
-
-    @Override
-    public HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
-    public static HandlerList getHandlerList() {
+    public NickData getData() {
+        return data;
+    }
+
+    public String getPreviousName() {
+        return previousName;
+    }
+
+    public String getNewName() {
+        return newName;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
         return HANDLERS;
     }
 
